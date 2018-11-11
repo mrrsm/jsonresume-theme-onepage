@@ -48,7 +48,7 @@ function render(resume) {
         block.highlights = block.highlights.map(h => {
           if(h.trim().indexOf("-") === 0) {
             return {
-              div: h
+              span: h
             };
           } else {
             return {
