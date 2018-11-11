@@ -45,25 +45,52 @@ function render(resume) {
 
         // SR modified:
         // allow highlights to have a hierarchy:
-        block.highlights = block.highlights.map(h => {
+        const hierarchicalHighlights = [];
+
+        let currentLi = null;
+
+        block.highlights.forEach(h => {
           if(h.trim().indexOf("-") === 0) {
-            return {
-              span: h
-            };
+
+            if(!currentLi) {
+              currentLi = {
+                items: []
+              };
+            }
+            if(!currentLi.items) {
+              currentLi.items = [];
+            }
+            // remove the leading spaces and -
+            h = h.trim().substr(1);
+            currentLi.items.push(h);
           } else {
-            return {
-              li: h
+
+            if(currentLi) {
+              hierarchicalHighlights.push(currentLi);
+            }
+
+            currentLi = {
+              summary: h
             };
-          }
+         }
         });
+
+        if(currentLi) {
+          hierarchicalHighlights.push(currentLi);
+          currentLi = null;
+        }
+
+        block.highlights = hierarchicalHighlights;
 
         if (block.summary) {
           block.highlights.unshift( {
-            span: block.summary
+            // note: MUST have 'li' else get a page break on print to PDF in Chrome:
+            summary: block.summary
           });
 
           delete block.summary;
         }
+        // END SR modified
       });
     }
   });

@@ -88,15 +88,23 @@
 	      </div>
 	      <div><a href='{{website}}'>{{website}}</a></div>
 	      {{#if highlights.length}}
+        {{!-- modified by SR --}}
 	      <ul class='highlights'>
 	        {{#each highlights}}
-            {{#if span}}
-	            <span>{{span}}</span>
-            {{else}}
-              <li>{{li}}</li>
-    	      {{/if}}
+            {{#if summary}}
+            {{!-- note MUST have li, else get early page break. but too many items can also cause a page break! --}}
+	            <li>{{summary}}</li>
+	          {{/if}}
+            {{#if items}}
+              <ul>
+                {{#each items}}
+                  <li>{{.}}</li>
+                {{/each}}
+              </ul>
+	          {{/if}}
 	        {{/each}}
 	      </ul>
+        {{!-- END modified by SR --}}
 	      {{/if}}
 	      {{#if details.length}}
 	      <ul class='details'>
