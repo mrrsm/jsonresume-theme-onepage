@@ -45,7 +45,9 @@
         {{#each profiles}}
           {{#if url}}
             <span class='url'>
-              <a href='{{url}}'>{{url}}</a>
+              {{!-- modified by SR --}}
+              <a href='{{url}}'>{{network}}: {{url}}</a>
+              {{!-- END modified by SR --}}
             </span>
             {{#unless @last}}<span class='divider'>|</span>{{/unless}}
           {{/if}}
