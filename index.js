@@ -62,7 +62,6 @@ function render(resume) {
             div: block.summary
           });
 
-          block.highlights.unshift(block.summary);
           delete block.summary;
         }
       });
