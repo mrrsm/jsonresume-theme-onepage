@@ -90,7 +90,11 @@
 	      {{#if highlights.length}}
 	      <ul class='highlights'>
 	        {{#each highlights}}
-	        <li>{{.}}</li>
+            {{#if div}}
+	            <div>{{div}}</div>
+            {{else}}
+              <li>{{li}}</li>
+    	      {{/if}}
 	        {{/each}}
 	      </ul>
 	      {{/if}}

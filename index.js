@@ -42,7 +42,26 @@ function render(resume) {
         if (block.highlights === undefined) {
           block.highlights = [];
         }
+
+        // SR modified:
+        // allow highlights to have a hierarchy:
+        block.highlights = block.highlights.map(h => {
+          if(h.trim().indexOf("-") === 0) {
+            return {
+              div: h
+            };
+          } else {
+            return {
+              li: h
+            };
+          }
+        });
+
         if (block.summary) {
+          block.highlights.unshift( {
+            div: block.summary
+          });
+
           block.highlights.unshift(block.summary);
           delete block.summary;
         }

@@ -1,8 +1,12 @@
 # jsonresume-theme-onepage
 
-A compact theme for JSON Resume, designed for printing. 
+A compact theme for JSON Resume, designed for printing.
 
 Tries to fit as much information as possible onto a single page without making sections look cluttered.
+
+MODIFIED by mrseanryan:
+
+- allow highlights to have hierarchy ('-' bullet points)
 
 ## Example
 

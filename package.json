@@ -1,11 +1,11 @@
 {
-  "name": "jsonresume-theme-onepage",
+  "name": "jsonresume-theme-onepage-mrseanryan",
   "version": "0.0.3",
-  "description": "Compact, printable theme for JSON Resume",
+  "description": "Compact, printable theme for JSON Resume - modified by mrseanryan",
   "author": "Ainsley Chong",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ainsleychong/jsonresume-theme-onepage.git"
+    "url": "https://github.com/mrseanryan/jsonresume-theme-onepage.git"
   },
   "license": "MIT",
   "dependencies": {
