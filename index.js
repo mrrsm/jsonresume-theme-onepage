@@ -84,7 +84,6 @@ function render(resume) {
 
         if (block.summary) {
           block.highlights.unshift( {
-            // note: MUST have 'li' else get a page break on print to PDF in Chrome:
             summary: block.summary
           });
 

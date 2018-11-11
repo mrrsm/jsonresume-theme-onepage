@@ -92,15 +92,15 @@
 	      <ul class='highlights'>
 	        {{#each highlights}}
             {{#if summary}}
-            {{!-- note MUST have li, else get early page break. but too many items can also cause a page break! --}}
+            {{!-- too many items can also cause a page break! --}}
 	            <li>{{summary}}</li>
 	          {{/if}}
             {{#if items}}
-              <ul>
+              <div>
                 {{#each items}}
-                  <li>{{.}}</li>
+                  <span>- {{.}}</span><br/>
                 {{/each}}
-              </ul>
+              </div>
 	          {{/if}}
 	        {{/each}}
 	      </ul>
