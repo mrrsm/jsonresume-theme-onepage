@@ -59,7 +59,7 @@ function render(resume) {
 
         if (block.summary) {
           block.highlights.unshift( {
-            div: block.summary
+            span: block.summary
           });
 
           delete block.summary;
