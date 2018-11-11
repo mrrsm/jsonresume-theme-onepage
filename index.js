@@ -89,6 +89,16 @@ function render(resume) {
 
           delete block.summary;
         }
+
+        // allow us to add blank lines, to avoid page break in middle of a block:
+        if(block.onepage_blankLinesForPrinting) {
+          block.blankLinesForPrinting = [];
+          // Add a dummy list - easier in JS than in hbs:
+          for(let i=0; i < block.onepage_blankLinesForPrinting; i++) {
+            block.blankLinesForPrinting.push(" ");
+          }
+        }
+
         // END SR modified
       });
     }

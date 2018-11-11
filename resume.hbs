@@ -75,6 +75,15 @@
     </div>
     <div class='sectionContent'>
       {{#each resume.work}}
+      {{!-- modified by SR --}}
+      {{#if blankLinesForPrinting}}
+        <div>
+          {{#each blankLinesForPrinting}}
+            <br/>
+          {{/each}}
+        </div>
+      {{/if}}
+      {{!-- END modified by SR --}}
 			<div class="jobBlock">
 	      <div class='blockHeader'>
 	        <span class='title'>
