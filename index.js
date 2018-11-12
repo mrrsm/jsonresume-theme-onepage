@@ -1,5 +1,6 @@
 var fs = require("fs");
 var Handlebars = require("handlebars");
+var moment = require('moment');
 
 COURSES_COLUMNS = 3;
 
@@ -18,6 +19,8 @@ function render(resume) {
   // Split courses into 3 columns
   if (validateArray(resume.education)) {
     resume.education.forEach(function(block) {
+      formatStartAndEndDate(block);
+
       if (validateArray(block.courses)) {
         splitCourses = [];
         columnIndex = 0;
@@ -36,6 +39,24 @@ function render(resume) {
     });
   }
 
+  function formatDate(date) {
+    const DATE_FORMAT_INPUT = 'YYYY-MM-DD'; // resume.json standard date format
+
+    const format = resume.basics.customSettings.showYearOnly ? 'YYYY' : 'MMMM YYYY';
+
+    return moment(date, DATE_FORMAT_INPUT).format(format);
+  }
+
+  // SR modified:
+  function formatStartAndEndDate(block) {
+    if (block.startDate) {
+      block.startDate = formatDate(block.startDate);
+    }
+    if (block.endDate) {
+      block.endDate = formatDate(block.endDate);
+    }
+  }
+
   PREPEND_SUMMARY_CATEGORIES.forEach(function(category) {
     if (resume[category] !== undefined) {
       resume[category].forEach(function(block) {
@@ -44,6 +65,8 @@ function render(resume) {
         }
 
         // SR modified:
+        formatStartAndEndDate(block);
+
         // allow highlights to have a hierarchy:
         const hierarchicalHighlights = [];
 
