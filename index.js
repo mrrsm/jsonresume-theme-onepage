@@ -20,7 +20,7 @@ function render(resume) {
   // Split courses into 3 columns
   if (validateArray(resume.education)) {
     resume.education.forEach(function(block) {
-      formatStartAndEndDate(block);
+      formatStartAndEndDate(block, resume);
 
       if (validateArray(block.courses)) {
         splitCourses = [];
@@ -40,26 +40,6 @@ function render(resume) {
     });
   }
 
-  function formatDate(date) {
-    const DATE_FORMAT_INPUT = "YYYY-MM-DD"; // resume.json standard date format
-
-    const format = resume.basics.customSettings.showYearOnly
-      ? "YYYY"
-      : "MMMM YYYY";
-
-    return moment(date, DATE_FORMAT_INPUT).format(format);
-  }
-
-  // SR modified:
-  function formatStartAndEndDate(block) {
-    if (block.startDate) {
-      block.startDate = formatDate(block.startDate);
-    }
-    if (block.endDate) {
-      block.endDate = formatDate(block.endDate);
-    }
-  }
-
   const categories = PREPEND_SUMMARY_CATEGORIES.map(cat => {
     if (resume[cat]) {
       resume[cat].title = cat;
@@ -72,8 +52,6 @@ function render(resume) {
   // Build a sections structure, so can reuse the rendering code (hbs):
   resume.sections = resume.sections || [];
   categories.forEach(function(cat) {
-    console.log("xxx", JSON.stringify(cat));
-
     if (cat.length) {
       cat = {
         title: cat.title,
@@ -109,17 +87,47 @@ function render(resume) {
     section.className = removeAll(section.title, " ");
   });
 
-  // TODO xxx extract fun processHighlightsOf
   resume.sections.forEach(function(section) {
-    section.blocks.forEach(function(block) {
-      // console.log("block", JSON.stringify(block));
+    processHighlightsOfSection(section, resume);
+  });
 
+  var css = fs.readFileSync(__dirname + "/style.css", "utf-8");
+  var tpl = fs.readFileSync(__dirname + "/resume.hbs", "utf-8");
+  return Handlebars.compile(tpl)({
+    css: css,
+    resume: resume
+  });
+}
+
+// SR modified
+
+function formatDate(date, resume) {
+  const DATE_FORMAT_INPUT = "YYYY-MM-DD"; // resume.json standard date format
+
+  const format = resume.basics.customSettings.showYearOnly
+    ? "YYYY"
+    : "MMMM YYYY";
+
+  return moment(date, DATE_FORMAT_INPUT).format(format);
+}
+
+function formatStartAndEndDate(block, resume) {
+  if (block.startDate) {
+    block.startDate = formatDate(block.startDate, resume);
+  }
+  if (block.endDate) {
+    block.endDate = formatDate(block.endDate, resume);
+  }
+}
+
+function processHighlightsOfSection(section, resume) {
+    section.blocks.forEach(function(block) {
       if (block.highlights === undefined) {
         block.highlights = [];
       }
 
       // SR modified:
-      formatStartAndEndDate(block);
+      formatStartAndEndDate(block, resume);
 
       // allow highlights to have a hierarchy:
       const hierarchicalHighlights = [];
@@ -168,17 +176,8 @@ function render(resume) {
       }
       // END SR modified
     });
-  });
-
-  var css = fs.readFileSync(__dirname + "/style.css", "utf-8");
-  var tpl = fs.readFileSync(__dirname + "/resume.hbs", "utf-8");
-  return Handlebars.compile(tpl)({
-    css: css,
-    resume: resume
-  });
 }
 
-// SR modified
 // printing http is just a waste of ink!
 function removeHttp(text) {
   const tokens = ["http://", "https://", "www."];
