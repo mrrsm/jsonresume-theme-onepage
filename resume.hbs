@@ -39,21 +39,13 @@
           {{#if city}}{{city}}{{/if}}{{#if region}}, {{region}}{{/if}}{{#if countryCode}}, {{countryCode}}{{/if}}
         </span>
       {{/location}}
+      {{!-- modified by SR --}}
+      <span id='profilesBlock'>
+        <span class='divider'>|</span>
+        <a href='{{website}}'>website: {{website}}</a>
+      </span>
+      {{!-- END modified by SR --}}
     </div>
-    {{#if profiles.length}}
-      <div id='profilesBlock'>
-        {{#each profiles}}
-          {{#if url}}
-            <span class='url'>
-              {{!-- modified by SR --}}
-              <a href='{{url}}'>{{network}}: {{url}}</a>
-              {{!-- END modified by SR --}}
-            </span>
-            {{#unless @last}}<span class='divider'>|</span>{{/unless}}
-          {{/if}}
-      {{/each}}
-      </div>
-    {{/if}}
   </div>
   <div class='sectionLine'></div>
 	{{/resume.basics}}
@@ -100,7 +92,7 @@
 	      <div><a href='{{website}}'>{{website}}</a></div>
 	      {{#if highlights.length}}
         {{!-- modified by SR --}}
-	      <ul class='highlights'>
+	      <ul class='highlights {{extraCss}}'>
 	        {{#each highlights}}
             {{#if summary}}
             {{!-- too many items can also cause a page break! --}}

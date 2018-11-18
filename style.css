@@ -1,6 +1,6 @@
 body {
   background: #EEEEEE;
-  font: 12px "Times New Roman", Times, sans-serif;
+  font: 12.5px "Times New Roman", Times, sans-serif;
   line-height: 1.4;
   margin: 40px 0;
 }
@@ -35,6 +35,14 @@ a {
   vertical-align: top;
   display: inline-block;
 }
+
+/* modified by SR */
+ul.coursesAndCertificates {
+  columns: 2;
+  -webkit-columns: 2;
+  -moz-columns: 2;
+}
+/* END modified by SR */
 
 .largeFont {
   font-size: 20px;
@@ -76,7 +84,7 @@ a {
 }
 
 .sectionContent .separator {
-  height: 14px;
+  height: 8px;
 }
 
 .sectionLine {

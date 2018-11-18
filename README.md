@@ -1,4 +1,6 @@
-# jsonresume-theme-onepage
+# jsonresume-theme-onepage-mrseanryan
+
+A tweaked version of `jsonresume-theme-onepage`.
 
 A compact theme for JSON Resume, designed for printing.
 
@@ -7,6 +9,10 @@ Tries to fit as much information as possible onto a single page without making s
 MODIFIED by mrseanryan:
 
 - allow highlights to have hierarchy ('-' bullet points)
+- slightly bigger font
+- show only 'website' not the full list of networks/profiles
+- allow a section to have preceding blank lines, for a page-break
+- other minor tweaks
 
 ## Example
 

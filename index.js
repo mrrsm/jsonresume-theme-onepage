@@ -16,6 +16,8 @@ function validateArray(arr) {
 }
 
 function render(resume) {
+  resume.basics.website = removeHttp(resume.basics.website);
+
   // Split courses into 3 columns
   if (validateArray(resume.education)) {
     resume.education.forEach(function(block) {
@@ -72,7 +74,9 @@ function render(resume) {
 
         let currentLi = null;
 
-        block.highlights.forEach(h => {
+        block.highlights
+        .map(h => removeHttp(h))
+        .forEach(h => {
           if(h.trim().indexOf("-") === 0) {
 
             if(!currentLi) {
@@ -122,6 +126,10 @@ function render(resume) {
           }
         }
 
+        if(block.position==="Courses and Certificates") {
+          block.extraCss = "coursesAndCertificates";
+        }
+
         // END SR modified
       });
     }
@@ -134,6 +142,24 @@ function render(resume) {
 		resume: resume
 	});
 }
+
+// SR modified
+// printing http is just a waste of ink!
+function removeHttp(text) {
+  const tokens = [
+    "http://", "https://",
+    "www."
+  ]
+
+  while(tokens.some(t => text.indexOf(t) >=0 )) {
+    tokens.forEach(t => {
+      text = text.replace(t, "");
+    });
+  };
+
+  return text;
+}
+// END SR modified
 
 module.exports = {
 	render: render
