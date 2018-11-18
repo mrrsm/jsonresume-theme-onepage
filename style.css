@@ -36,14 +36,6 @@ a {
   display: inline-block;
 }
 
-/* modified by SR */
-ul.coursesAndCertificates {
-  columns: 2;
-  -webkit-columns: 2;
-  -moz-columns: 2;
-}
-/* END modified by SR */
-
 .largeFont {
   font-size: 20px;
 }
@@ -61,6 +53,7 @@ ul.coursesAndCertificates {
   width: 18%;
   vertical-align: top;
   display: inline-block;
+  text-transform: uppercase;
 }
 
 .sectionContent {
@@ -162,4 +155,10 @@ ul.coursesAndCertificates {
   a {
     color: black;
   }
+}
+
+.CoursesandCertification ul {
+  columns: 2;
+  -webkit-columns: 2;
+  -moz-columns: 2;
 }

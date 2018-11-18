@@ -1,18 +1,17 @@
 var fs = require("fs");
 var Handlebars = require("handlebars");
-var moment = require('moment');
+var moment = require("moment");
 
 COURSES_COLUMNS = 3;
 
-PREPEND_SUMMARY_CATEGORIES = [
-  "work",
-  "volunteer",
-  "awards",
-  "publications"
-];
+PREPEND_SUMMARY_CATEGORIES = ["work", "volunteer", "awards", "publications"];
+
+EXTENSION_CATEGORIES = ["projects", "coursesAndCertificates", "earlierWork"];
 
 function validateArray(arr) {
-  return arr !== undefined && arr !== null && arr instanceof Array && arr.length > 0;
+  return (
+    arr !== undefined && arr !== null && arr instanceof Array && arr.length > 0
+  );
 }
 
 function render(resume) {
@@ -42,9 +41,11 @@ function render(resume) {
   }
 
   function formatDate(date) {
-    const DATE_FORMAT_INPUT = 'YYYY-MM-DD'; // resume.json standard date format
+    const DATE_FORMAT_INPUT = "YYYY-MM-DD"; // resume.json standard date format
 
-    const format = resume.basics.customSettings.showYearOnly ? 'YYYY' : 'MMMM YYYY';
+    const format = resume.basics.customSettings.showYearOnly
+      ? "YYYY"
+      : "MMMM YYYY";
 
     return moment(date, DATE_FORMAT_INPUT).format(format);
   }
@@ -59,108 +60,139 @@ function render(resume) {
     }
   }
 
-  PREPEND_SUMMARY_CATEGORIES.forEach(function(category) {
-    if (resume[category] !== undefined) {
-      resume[category].forEach(function(block) {
-        if (block.highlights === undefined) {
-          block.highlights = [];
-        }
+  const categories = PREPEND_SUMMARY_CATEGORIES.map(cat => {
+    if (resume[cat]) {
+      resume[cat].title = cat;
+    }
+    return resume[cat];
+  })
+    .concat(resume.basics.extensions.sections)
+    .filter(c => !!c);
 
-        // SR modified:
-        formatStartAndEndDate(block);
+  // Build a sections structure, so can reuse the rendering code (hbs):
+  resume.sections = resume.sections || [];
+  categories.forEach(function(cat) {
+    console.log("xxx", JSON.stringify(cat));
 
-        // allow highlights to have a hierarchy:
-        const hierarchicalHighlights = [];
+    if (cat.length) {
+      cat = {
+        title: cat.title,
+        blocks: cat
+      };
+    }
 
-        let currentLi = null;
+    if(cat.title.toLowerCase() === "work") {
+      cat.title = "Experience";
+    }
 
-        block.highlights
+    resume.sections.push(cat);
+  });
+
+  const removeAll = (text, token) => {
+    while(text.indexOf(token)>= 0) {
+      text = text.replace(token, "");
+    }
+    return text;
+  };
+
+  resume.sections.forEach(function(section) {
+    // allow us to add blank lines, to avoid page break in middle of a block:
+    if (section.blankLinesForPrinting) {
+      section.blankLinesForPrintingSpaces = [];
+      // Add a dummy list - easier in JS than in hbs:
+      for (let i = 0; i < section.blankLinesForPrinting; i++) {
+        section.blankLinesForPrintingSpaces.push(" ");
+      }
+    }
+
+    // allow for extra styling:
+    section.className = removeAll(section.title, " ");
+  });
+
+  // TODO xxx extract fun processHighlightsOf
+  resume.sections.forEach(function(section) {
+    section.blocks.forEach(function(block) {
+      // console.log("block", JSON.stringify(block));
+
+      if (block.highlights === undefined) {
+        block.highlights = [];
+      }
+
+      // SR modified:
+      formatStartAndEndDate(block);
+
+      // allow highlights to have a hierarchy:
+      const hierarchicalHighlights = [];
+
+      let currentLi = null;
+
+      block.highlights
         .map(h => removeHttp(h))
         .forEach(h => {
-          if(h.trim().indexOf("-") === 0) {
-
-            if(!currentLi) {
+          if (h.trim().indexOf("-") === 0) {
+            if (!currentLi) {
               currentLi = {
                 items: []
               };
             }
-            if(!currentLi.items) {
+            if (!currentLi.items) {
               currentLi.items = [];
             }
             // remove the leading spaces and -
             h = h.trim().substr(1);
             currentLi.items.push(h);
           } else {
-
-            if(currentLi) {
+            if (currentLi) {
               hierarchicalHighlights.push(currentLi);
             }
 
             currentLi = {
               summary: h
             };
-         }
+          }
         });
 
-        if(currentLi) {
-          hierarchicalHighlights.push(currentLi);
-          currentLi = null;
-        }
+      if (currentLi) {
+        hierarchicalHighlights.push(currentLi);
+        currentLi = null;
+      }
 
-        block.highlights = hierarchicalHighlights;
+      block.highlights = hierarchicalHighlights;
 
-        if (block.summary) {
-          block.highlights.unshift( {
-            summary: block.summary
-          });
+      if (block.summary) {
+        block.highlights.unshift({
+          summary: block.summary
+        });
 
-          delete block.summary;
-        }
-
-        // allow us to add blank lines, to avoid page break in middle of a block:
-        if(block.onepage_blankLinesForPrinting) {
-          block.blankLinesForPrinting = [];
-          // Add a dummy list - easier in JS than in hbs:
-          for(let i=0; i < block.onepage_blankLinesForPrinting; i++) {
-            block.blankLinesForPrinting.push(" ");
-          }
-        }
-
-        if(block.position==="Courses and Certificates") {
-          block.extraCss = "coursesAndCertificates";
-        }
-
-        // END SR modified
-      });
-    }
+        delete block.summary;
+      }
+      // END SR modified
+    });
   });
 
-	var css = fs.readFileSync(__dirname + "/style.css", "utf-8");
-	var tpl = fs.readFileSync(__dirname + "/resume.hbs", "utf-8");
-	return Handlebars.compile(tpl)({
-		css: css,
-		resume: resume
-	});
+  var css = fs.readFileSync(__dirname + "/style.css", "utf-8");
+  var tpl = fs.readFileSync(__dirname + "/resume.hbs", "utf-8");
+  return Handlebars.compile(tpl)({
+    css: css,
+    resume: resume
+  });
 }
 
 // SR modified
 // printing http is just a waste of ink!
 function removeHttp(text) {
-  const tokens = [
-    "http://", "https://",
-    "www."
-  ]
+  const tokens = ["http://", "https://", "www."];
 
-  while(tokens.some(t => text.indexOf(t) >=0 )) {
+  while (tokens.some(t => text.indexOf(t) >= 0)) {
     tokens.forEach(t => {
       text = text.replace(t, "");
     });
-  };
+  }
 
   return text;
 }
 // END SR modified
 
 module.exports = {
-	render: render
+  render: render
 };
